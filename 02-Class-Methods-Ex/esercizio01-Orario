@@ -1,0 +1,4 @@
+Scrivi una classe T che contenga un orario valido. 
+Deve essere possibile impostare un orario in ore,minuti,secondi; 
+la classe deve prevedere un metodo per la validazione di un orario, 
+un metodo per aggiungere un orario ad un altro e un metodo per sottrarre due orari . 

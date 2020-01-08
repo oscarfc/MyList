@@ -1,0 +1,10 @@
+target/
+nbproject/
+build/
+dist/
+node_modules/
+.war
+.jar
+build.xml
+bower_components/
+build/
