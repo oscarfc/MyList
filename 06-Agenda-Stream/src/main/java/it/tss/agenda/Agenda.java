@@ -36,6 +36,7 @@ public class Agenda {
      */
     public List<Appuntamento> search(String ricerca) {
         List<Appuntamento> result = new ArrayList<>();
+
         for (Appuntamento a : appuntamenti) {
             if (a.findMotivo(ricerca) || a.findPersona(ricerca)
                     || a.findLuogo(ricerca)) {
@@ -166,17 +167,17 @@ public class Agenda {
     }
 
     public void stampa() {
-        for (Appuntamento a : appuntamenti) {
-            System.out.println(a);
-        }
+        //appuntamenti.forEach((Appuntamento a) -> System.out.println(a));
+        //appuntamenti.forEach(a -> System.out.println(a));
+        appuntamenti.forEach(System.out::println);
     }
-    
+
     /**
      * ritorna tutti gli appuntamenti dell'Agenda
-     * 
-     * @return 
+     *
+     * @return
      */
-    public List<Appuntamento> all(){
-       return new ArrayList<>(appuntamenti);
+    public List<Appuntamento> all() {
+        return new ArrayList<>(appuntamenti);
     }
 }
