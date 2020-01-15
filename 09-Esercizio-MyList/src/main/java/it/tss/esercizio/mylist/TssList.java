@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -184,7 +185,7 @@ public class TssList<T> implements List<T> {
 
     @Override
     public ListIterator<T> listIterator(int idx) {
-        return new TssListIterator<>(Arrays.copyOf(list, list.length),idx);
+        return new TssListIterator<>(Arrays.copyOf(list, list.length), idx);
     }
 
     //algoritmo
@@ -214,6 +215,9 @@ public class TssList<T> implements List<T> {
 
         @Override
         public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             return data[idx++];
         }
 
