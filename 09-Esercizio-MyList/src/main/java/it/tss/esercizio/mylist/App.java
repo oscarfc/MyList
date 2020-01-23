@@ -55,18 +55,46 @@ public class App {
         l.add(new A("all_1"));
         l.add(new A("all_2"));
         l.add(new A("all_3"));
-        System.out.println(list.addAll(l));
+        System.out.println("addAll(l)   " + list.addAll(l));
         System.out.println(list);
 
-        System.out.println(list.addAll(2, l));
+        System.out.println("addAll(2, l)   " + list.addAll(2, l));
         System.out.println(list);
 
-        System.out.println(list.removeAll(l));
+        System.out.println("removeAll(l)  " + list.removeAll(l));
         System.out.println(list);
 
-        System.out.println(list.remove(2));
+        System.out.println("remove(2)  " + list.remove(2));
         System.out.println(list);
-   }
+
+        System.out.println("set(3, new A(\"set_3\"))   " + list.set(3, new A("set_3")));
+        System.out.println(list);
+
+        list.add(3, new A("add_3"));
+        System.out.println(list);
+
+        TssList<A> list_empty = new TssList<>();
+        System.out.println("stampa una lista vuota: " + list_empty);
+
+        System.out.println("removeAll(l)  " + list.removeAll(l));
+        System.out.println(list);
+
+        System.out.println("subList(2, 5)  " + list.subList(2, 5));
+        System.out.println(list);
+
+        System.out.println("containsAll(l)   " + list.containsAll(l));
+
+        System.out.println("retainAll(l)  " + list.retainAll(l));
+        System.out.println("size()   " + list.size());
+        System.out.println(list);
+        System.out.println("retainAll(l)  " + list.retainAll(l));
+        System.out.println(list);
+
+        list.clear();
+        System.out.println(list);
+        l.listIterator();
+
+    }
 }
 
 class A {

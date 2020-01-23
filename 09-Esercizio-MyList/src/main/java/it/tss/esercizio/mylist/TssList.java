@@ -5,6 +5,7 @@
  */
 package it.tss.esercizio.mylist;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,14 +20,17 @@ import java.util.NoSuchElementException;
  */
 public class TssList<T> implements List<T> {
 
-    private T[] list = (T[]) new Object[0];
+    private T[] list ;
 
     public TssList() {
-
+        list = (T[]) new Object[0];
     }
 
     public TssList(T[] list) {
-        this.list = Arrays.copyOf(list, list.length);
+        this.list = (T[]) new Object[list.length];
+        for (int i = 0; i < this.list.length; i++) {
+            this.list[i] = list[i];            
+        }
     }
 
     @Override
@@ -41,6 +45,7 @@ public class TssList<T> implements List<T> {
 
     @Override
     public boolean contains(Object p) {
+        checkIfIsNull(p);
         for (T el : list) {
             if (el.equals(p)) {
                 return true;
@@ -61,7 +66,6 @@ public class TssList<T> implements List<T> {
         for (int i = 0; i < list.length; i++) {
             result[i] = list[i];
         }
-//        System.arraycopy(list, 0, result, 0, list.length);
         return result;
     }
 
@@ -75,9 +79,7 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public boolean add(T p) {
-        if (p == null) {
-            throw new NullPointerException();
-        }
+        checkIfIsNull(p);
         T[] tmp;
         tmp = (T[]) new Object[list.length + 1];
         /*array generic creation*/
@@ -94,6 +96,7 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public boolean remove(Object p) {
+        checkIfIsNull(p);
         int pos = indexOf(p);
         if (pos == -1) {
             return false;
@@ -119,26 +122,22 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public boolean containsAll(Collection<?> arg0) {
+        checkIfIsNull(arg0);
         return Arrays.asList(list).containsAll(arg0);
     }
 
     //algoritmo
     @Override
     public boolean addAll(Collection<? extends T> arg0) {
-        if (arg0 == null) {
-            throw new NullPointerException();
-        }
+        checkIfIsNull(arg0);
         T[] tmp;
         tmp = (T[]) new Object[list.length + arg0.size()];
-        /*array generic creation*/
         for (int i = 0; i < list.length; i++) {
             tmp[i] = list[i];
         }
         T[] a = (T[]) arg0.toArray();
         for (int i = 0; i < a.length; i++) {
-            if (a[i] == null) {
-                throw new NullPointerException();
-            }
+            checkIfIsNull(a[i]);
             tmp[i + list.length] = (T) a[i];
         }
         list = tmp;
@@ -148,12 +147,8 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public boolean addAll(int arg0, Collection<? extends T> arg1) {
-        if (arg1 == null) {
-            throw new NullPointerException();
-        }
-        if (arg0 < 0 || arg0 > list.length) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIfIsOutOfBound(arg0);
+        checkIfIsNull(arg1);
         T[] tmp;
         tmp = (T[]) new Object[list.length + arg1.size()];
         for (int i = 0; i < arg0; i++) {
@@ -161,10 +156,8 @@ public class TssList<T> implements List<T> {
         }
         T[] a = (T[]) arg1.toArray();
         for (int i = 0; i < a.length; i++) {
-            if (a[i] == null) {
-                throw new NullPointerException();
-            }
-            tmp[i + arg0] = (T) a[i];
+            checkIfIsNull(a[i]);
+            tmp[i + arg0] = a[i];
         }
         for (int i = arg0; i < list.length; i++) {
             tmp[i + a.length] = list[i];
@@ -176,14 +169,14 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public boolean removeAll(Collection<?> arg0) {
-        if (arg0 == null) {
-            throw new NullPointerException();
-        }
+        checkIfIsNull(arg0);
+        T[] tmp = backupList();
         for (Object ob : arg0) {
-            if (ob == null) {
-                throw new NullPointerException();
+            checkIfIsNull(ob);
+            if (!this.remove((T) ob)) {
+                list = tmp;
+                return false;
             }
-            this.remove((T) ob);
         }
         return true;
 //        List<T> tmp = new ArrayList<>( Arrays.asList(list));
@@ -195,27 +188,48 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public boolean retainAll(Collection<?> arg0) {
-        List<T> tmp = Arrays.asList(list);
-        boolean result = tmp.retainAll(arg0);
-        list = tmp.toArray(list);
-        return result;
+        checkIfIsNull(arg0);
+        T[] tmp;
+        tmp = (T[]) new Object[list.length];
+        boolean copia;
+        int i = 0;
+        for (T el : list) {
+            copia = false;
+            for (Object ob : arg0) {
+                if (el.equals(ob)) {
+                    copia = true;
+                    break;
+                }
+            }
+            if (copia) {
+                tmp[i++] = el;
+            } else {
+                return false;
+            }
+        }
+        list = (T[]) new Object[i];
+        for (int j = 0; j < i; j++) {
+            list[j] = tmp[j];
+        }
+        return true;
     }
 
     //algoritmo
     @Override
     public void clear() {
-        List<T> tmp = Arrays.asList(list);
-        tmp.clear();
-        list = tmp.toArray(list);
+        list = (T[]) new Object[0];
     }
 
     @Override
     public T get(int idx) {
+        checkIfIsOutOfBound(idx);
         return list[idx];
     }
 
     @Override
     public T set(int idx, T p) {
+        checkIfIsOutOfBound(idx);
+        checkIfIsNull(p);
         T result = list[idx];
         list[idx] = p;
         return result;
@@ -224,17 +238,24 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public void add(int idx, T arg1) {
-        List<T> tmp = Arrays.asList(list);
-        tmp.add(idx, arg1);
-        list = tmp.toArray(list);
+        checkIfIsOutOfBound(idx);
+        checkIfIsNull(arg1);
+        T[] tmp;
+        tmp = (T[]) new Object[list.length + 1];
+        for (int i = 0; i < idx; i++) {
+            tmp[i] = list[i];
+        }
+        tmp[idx] = (T) arg1;
+        for (int i = idx; i < list.length; i++) {
+            tmp[i + 1] = list[i];
+        }
+        list = tmp;
     }
 
     //algoritmo
     @Override
     public T remove(int arg0) {
-        if (arg0 < 0 || arg0 > list.length) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIfIsOutOfBound(arg0);
         T[] tmp;
         T t;
         tmp = (T[]) new Object[list.length - 1];
@@ -244,7 +265,6 @@ public class TssList<T> implements List<T> {
         t = list[arg0];
         for (int i = arg0; i < tmp.length; i++) {
             tmp[i] = list[i + 1];
-
         }
         list = tmp;
         return t;
@@ -253,6 +273,7 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public int indexOf(Object arg0) {
+        checkIfIsNull(arg0);
         for (int i = 0; i < list.length; i++) {
             if (list[i].equals(arg0)) {
                 return i;
@@ -264,7 +285,14 @@ public class TssList<T> implements List<T> {
     //algoritmo
     @Override
     public int lastIndexOf(Object arg0) {
-        return Arrays.asList(list).lastIndexOf(arg0);
+        checkIfIsNull(arg0);
+        int index = -1;
+        for (int i = 0; i < list.length; i++) {
+            if (list[i].equals(arg0)) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     @Override
@@ -273,19 +301,61 @@ public class TssList<T> implements List<T> {
     }
 
     @Override
-    public ListIterator<T> listIterator(int idx) {
+    public ListIterator<T> listIterator(int idx
+    ) {
         return new TssListIterator<>(Arrays.copyOf(list, list.length), idx);
     }
 
     //algoritmo
     @Override
     public List<T> subList(int arg0, int arg1) {
-        return Arrays.asList(list).subList(arg0, arg1);
+        checkIfIsOutOfBound(arg0);
+        checkIfIsOutOfBound(arg1);
+        if (arg1 < arg0) {
+            throw new IndexOutOfBoundsException();
+        }
+        List<T> l = new ArrayList<>(arg1 - arg0);
+        for (int i = arg0; i < arg1; i++) {
+            l.add(list[i]);
+        }
+        return l;
     }
 
     @Override
     public String toString() {
-        return Arrays.asList(list).toString();
+        String ret = "[ ";
+        for (int i = 0; i < list.length - 1; i++) {
+            ret += list[i].toString() + ", ";
+        }
+        ret += (list.length == 0 ? " " : list[list.length - 1].toString() + " ") + "]";
+        return ret;
+    }
+
+    private void checkIfIsNull(Collection<? extends T> arg0) {
+        if (arg0 == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    private void checkIfIsNull(Object ob) {
+        if (ob == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    private void checkIfIsOutOfBound(int arg0) {
+        if (arg0 < 0 || arg0 > list.length) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private T[] backupList() {
+        T[] ret = (T[]) new Object[list.length];
+
+        for (int i = 0; i < list.length; i++) {
+            ret[i] = list[i];
+        }
+        return ret;
     }
 
     private class TssIterator<T> implements Iterator<T> {
